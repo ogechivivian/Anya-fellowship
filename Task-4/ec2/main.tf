@@ -21,6 +21,7 @@ resource "aws_launch_template" "launch_template" {
     Role        = var.infra_role
     Environment = var.infra_env
     ManagedBy   = "terraform"
+    Backup      = "true"
   },
   var.tags
   )

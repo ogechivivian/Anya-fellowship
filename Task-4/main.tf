@@ -1,46 +1,7 @@
-###
-# Providers
-##
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "3.50.0"
-    }
-  }
-
-#   backend "s3" {
-#     bucket  = ""
-#     key     = ""
-#     region  = "us-east-2"
-#   }
-}
-
-provider "aws" {
-  region  = "us-east-2"
-}
 
 
-###
-# Variables
-##
-variable "infra_env" {
-  type        = string
-  description = "infrastructure environment"
-  default     = "test"
-}
 
-variable "vpc-name"{
-  type        = string
-  description = ""
-  default     = "test"
-}
 
-variable "default_region" {
-  type        = string
-  description = "the region this infrastructure is in"
-  default     = "us-east-1"
-}
 
 locals {
   cidr_subnets = cidrsubnets("10.0.0.0/17", 4, 4, 4, 4, 4, 4)
@@ -69,38 +30,8 @@ data "aws_ami" "app" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-
-#    filter {
-#     name   = "tag:Environment"
-#     values = [var.infra_env]
-#   }
 }
 
-# data "aws_ami" "app" {
-#   most_recent = true
-
-#   filter {
-#     name   = "state"
-#     values = ["available"]
-#   }
-
-#   filter {
-#     name   = "tag:Component"
-#     values = ["app"]
-#   }
-
-#   filter {
-#     name   = "tag:Project"
-#     values = ["cloudcasts"]
-#   }
-
-#   filter {
-#     name   = "tag:Environment"
-#     values = [var.infra_env]
-#   }
-
-#   owners = ["self"]
-# }
 
 
 ###
@@ -152,4 +83,10 @@ module "autoscale_queue" {
   min_size    = 0
   max_size    = 5
   desired_capacity = 2
+}
+
+module "backup" {
+  source            = "../Task-4/backup"
+  key               = var.key
+  value             = var.value
 }
