@@ -1,29 +1,30 @@
-variable "cidrblock" {
+variable "vpc_cidr" {
   type        = string
-  description = ""
-  default     = null
+  description = "The IP range to use for the VPC"
+  default     = "10.0.0.0/16"
 }
 
-variable "gw-name" {
+variable "infra_env" {
   type        = string
-  description = ""
-  default     = null
+  description = "infrastructure environment"
 }
 
-variable "tenancy" {
-  type        = string
-  description = ""
-  default     = null
+variable "azs" {
+  type        = list(string)
+  description = "AZs to create subnets into"
 }
 
-variable "subnet-name" {
-  type        = string
-  description = ""
-  default     = null
+variable "public_subnets" {
+  type        = list(string)
+  description = "subnets to create for public network traffic, one per AZ"
 }
 
-variable "vpc-name" {
+variable "private_subnets" {
+  type        = list(string)
+  description = "subnets to create for private network traffic, one per AZ"
+}
+variable "vpc-name"{
   type        = string
   description = ""
-  default     = null
+  default     = "test"
 }

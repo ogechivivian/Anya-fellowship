@@ -1,53 +1,33 @@
-resource "aws_vpc" "main" {
-  cidr_block       = var.cidrblock
-  instance_tenancy = var.tenancy
+
+# https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "3.2.0"
+
+  name = "Anyablockchain-${var.infra_env}-vpc"
+  cidr = var.vpc_cidr
+
+  azs = var.azs
+
+  # Single NAT Gateway, see docs linked above
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
+  one_nat_gateway_per_az = false
+
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
 
   tags = {
-    Name = var.vpc-name
-  }
-}
-
-resource "aws_security_group" "allow_tls" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description      = "TLS from VPC"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.main.cidr_block]
-    ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+    Name        = var.vpc-name
+    Environment = var.infra_env
+    ManagedBy   = "terraform"
   }
 
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]   // Allow_all egress 
+  private_subnet_tags = {
+    Role = "private"
   }
 
-  tags = {
-    Name = "allow_tls"
-  }
-}
-
-
-resource "aws_subnet" "main" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.cidrblock
-
-  tags = {
-    Name = var.subnet-name
-  }
-}
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = var.gw-name
+  public_subnet_tags = {
+    Role = "public"
   }
 }
