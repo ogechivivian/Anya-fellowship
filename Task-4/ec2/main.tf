@@ -19,7 +19,6 @@ resource "aws_launch_template" "launch_template" {
   {
     Name        = "Anyablockchain-${var.infra_env}-${var.infra_role}-lt"
     Role        = var.infra_role
-    Project     = "cloudcasts.io"
     Environment = var.infra_env
     ManagedBy   = "terraform"
   },
