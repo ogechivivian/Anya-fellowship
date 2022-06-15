@@ -1,0 +1,10 @@
+---
+- name: Wait for system ready
+  hosts: collator
+  gather_facts: no
+  become: yes
+  tasks:
+  - name: Install polkadot collator node systemd unit file
+    template: src=collatorpolkadot.j2 dest=/etc/systemd/system/polkadotcollator.service
+  - name: start polkadotcollatorservice
+    systemd: state=started name=polkadotcollator daemon_reload=yes

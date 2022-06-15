@@ -1,0 +1,10 @@
+---
+- name: Wait for system ready
+  hosts: boot
+  gather_facts: no
+  become: yes
+  tasks:
+  - name: Install polkadot boot node systemd unit file
+    template: src=polkadotboot.j2 dest=/etc/systemd/system/polkadotboot.service
+  - name: start polkadotbootservice
+    systemd: state=started name=polkadotboot daemon_reload=yes

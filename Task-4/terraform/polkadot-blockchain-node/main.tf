@@ -7,14 +7,15 @@ resource "aws_ebs_volume" "polkadot_volume" {
 resource "aws_volume_attachment" "attach_demo_volume" { 
     device_name = "/dev/xvdg" 
     volume_id = "${aws_ebs_volume.polkadot_volume.id}" 
-    instance_id = "${aws_instance.polkadot-node[0].id}" 
+    instance_id = "${aws_instance.polkadot-node[0].id}"  // modify to apply to all instances
     skip_destroy = true
 }
 
 resource "aws_instance" "polkadot-node" {
     ami = var.image 
     instance_type = var.machine_type 
-    key_name = "test-key" 
+    key_name = data.aws_key_pair.aws-key.key_name
+    /* key_name = "test-key" */
     count = var.node_count 
     ebs_optimized = true
     subnet_id = "${aws_subnet.polkadot-node-subnet.id}" 

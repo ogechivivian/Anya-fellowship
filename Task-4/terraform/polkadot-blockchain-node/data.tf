@@ -1,6 +1,6 @@
-# data "aws_key_pair" {
-#     key_name = "test-key"
-#     value    = ""
-# }
+ data "aws_key_pair" "aws-key" {
+    key_name = "test-key"
+ }
+
 
 

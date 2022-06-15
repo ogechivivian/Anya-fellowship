@@ -1,0 +1,17 @@
+---
+- name: Wait for system ready
+  hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+  - name: download polkadot binary
+    get_url:
+      url: https://github.com/paritytech/polkadot/releases/download/v0.9.23/polkadot  
+      dest: /tmp/polkadot
+      mode: '0755'
+  - name: Copy file with owner and permissions
+    ansible.builtin.copy:
+      src: /tmp/polkadot
+      dest: /usr/bin/polkadot
+      mode: '0755'
+      remote_src: yes

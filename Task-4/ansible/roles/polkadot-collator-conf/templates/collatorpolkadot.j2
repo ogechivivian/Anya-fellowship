@@ -1,0 +1,10 @@
+[Unit]
+Description=Polkadot Validator
+
+[Service]
+ExecStart=polkadot --name Anyacollatornode --collator  --ws-port 9944  --chain=rococo --base-path=/tmp --listen-addr=/ip4/0.0.0.0/tcp/30334 --public-addr=/ip4/0.0.0.0/tcp/30334 -- --execution=wasm --rpc-methods=unsafe  -- --execution=wasm  --listen-addr=/ip4/0.0.0.0/tcp/30333 --public-addr=/ip4/0.0.0.0/tcp/30333
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+---
+- name: Wait for system ready
+  hosts: rpc
+  gather_facts: no
+  become: yes
+  tasks:
+  - name: Install polkadot rpc node systemd unit file
+    template: src=polkadotrpc.j2 dest=/etc/systemd/system/polkadotrpc.service
+  - name: start polkadotrpcservice
+    systemd: state=started name=polkadotrpc daemon_reload=yes

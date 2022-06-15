@@ -1,0 +1,8 @@
+[all]
+34.219.113.134  ansible_connection=ssh ansible_user=ubuntu
+
+[rpc]
+
+[boot]
+
+[collator]
