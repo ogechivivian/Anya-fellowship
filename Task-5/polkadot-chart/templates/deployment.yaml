@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "polkadot-chart.fullname" . }}
+  labels:
+    {{- include "polkadot-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "polkadot-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "polkadot-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "polkadot-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}"
+          {{- if .Values.image.command }}
+          command:
+            {{- toYaml.Values.image.command | nindent 12}}
+          {{- end }}
+          # args:
+          {{- if .Values.environmentVariables}}
+          env:
+           {{- range $key, $value := .Values.environmentVariables }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          # network: "kusama-net"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: p2p
+              containerPort: 30333
+              protocol: TCP
+            - name: rpc
+              containerPort: 9933
+              protocol: TCP
+            - name: tcp
+              containerPort: 9944
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          # volumeMounts:
+          # - name: data-node
+          #   mounthPath: /node-data
+          #   subPath: /node-data
+        {{- if .Values.sidecarimage }}
+        - name: "{{ .Values.sidecarimage.name }}"
+          image: "{{ .Values.sidecarimage.repository }}"
+          imagePullPolicy: {{ .Values.sidecarimage.pullPolicy }}
+        {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
